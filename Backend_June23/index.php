@@ -188,9 +188,26 @@ session_start();                               //$_SESSION;
 $SESSION['username'] = "Akash Soni";
 
 //form handling
-
+if(isset($_POST['submit'])) {
+    $uname = $_POST['uname'];
+    $pwd = $_POST['pwd'];
 
 //database management
+    $conn = mysqli_connect('localhost','db_user','db_pwd','sampledb');
+
+    $sql_query = "SELECT count(*) AS usercount FROM users WHERE uname='$uname' AND passwd='$pwd';";
+    $result = mysqli_query($conn,$sql_query);
+    $rows = mysqli_fetch_array($result);
+    if($row['usercount']==1) {
+        echo "USer exists";
+    }
+    else {
+        echo "Username and password did not match";
+    }
+
+}
+
+
 
 
 ?>
