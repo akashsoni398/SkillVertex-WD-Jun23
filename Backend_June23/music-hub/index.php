@@ -1,0 +1,420 @@
+<?php
+    include "./dbconfig.php";
+    session_start();
+
+    if(isset($_GET['logout'])) {
+        session_destroy();
+        header("Location: ./index.php");
+    }
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Music Hub</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            }
+
+            body {
+                background-color: rgb(255, 250, 244);
+            }
+
+            header {
+                text-align: right;
+                background-color: rgb(17, 17, 17);
+            }
+            header>a {
+                text-decoration: none;
+                color: white;
+                padding-right: 20px;
+                font-size: 15px;
+            }
+            #dropdown {
+                display: inline-block;
+            }
+            #dropbtn {
+                background-color: green;
+                color: white;
+                font-size: 17px;
+                font-weight: bold;
+                border: none;
+                font-family: Arial, Helvetica, sans-serif;
+                padding: 12px 25px;
+            }
+            
+            #dropdown-content {
+                position: absolute;
+                right: 0;
+                background-color: gray;
+                display: none;
+                z-index: 1000000;
+            }
+            #dropdown-content a {
+                display: block;
+                padding: 12px 25px;
+                color: whitesmoke;
+                text-decoration: none;
+            }
+            #dropdown:hover #dropbtn {
+                background-color: darkgreen;
+            }
+            #dropdown-content a:hover {
+                background-color: rgb(84, 84, 84);
+            }
+            #dropdown:hover #dropdown-content {
+                display: block;
+            }
+
+            #branding {
+                background-color: #fdca16;
+                position: relative;
+                z-index: 0;
+            }
+            #branding-left-align img {
+                position: relative;
+                height: 150px;
+                width: 150px;
+            }
+            #branding-left-align h1 {
+                position: absolute;
+                top:10px;
+                left:160px;
+                font-size: 70px;
+                font-family: fantasy;
+                font-weight: normal;
+
+            }
+            #branding-left-align p {
+                position: absolute;
+                top:90px;
+                left: 160px;
+                font-size: 18px;
+            }
+            #branding-right-align {
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+            #search-form {
+                position: relative;
+                top: 60px;
+                right: 40px;
+            }
+            #search-form input {
+                position: absolute;
+                top:0;
+                right: 0;
+                height: 30px;
+                width: 260px;
+                padding-left: 5px;
+                padding-right: 30px;
+            }
+            #search-form button {
+                position: absolute;
+                top:0;
+                right: 0;
+                height: 30px;
+                width: 30px;
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+            }
+            nav {
+                background-color: #333;
+            }
+            nav ul {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-evenly;
+            }
+            nav ul li {
+                list-style-type: none;
+            }
+
+            nav ul li a {
+                color: aliceblue;
+                font-size: 20px;
+                text-decoration: none;
+                padding: 15px 20px;
+                display: block;
+                white-space:nowrap;
+            }
+        </style>
+    </head>
+    <body>
+
+        <header>
+            <a href="./legal/privacy.html">Privacy Policy</a>
+            <a href="./legal/tnc.html">Terms & Conditions</a>
+            
+            <?php if(!isset($_SESSION['userid'])) { ?>
+
+            <div id="dropdown">
+                <button id="dropbtn">LOGIN</button>
+                <div id="dropdown-content">
+                    <a href="./auth/login.php">Login into existing account</a>
+                    <a href="./auth/register.php">Create a new account</a>
+                </div>
+            </div>
+
+            <?php } else { ?>
+
+            <div id="dropdown">
+                <button id="dropbtn"><?php echo $_SESSION['username'] ?></button>
+                <div id="dropdown-content">
+                    <a href="./auth/changepwd.php">Change account password</a>
+                    <a href="./index.php?logout=true">Logout</a>
+                </div>
+            </div>
+
+            <?php } ?>
+
+
+        </header>
+
+        <section id="branding">
+            <div id="branding-left-align">
+                <img src="./assets/images/musichub-logo.gif" alt="Music Hub Logo" />
+                <h1>MUSIC HUB</h1>
+                <p>----------------------------------------------------<br />One stop shop for all your musical needs</p>
+            </div>
+            <div id="branding-right-align">
+                <form id="search-form" method="get" action="search.php">
+                    <input type="search" name="search-query" placeholder="Search for songs, artists, albums, etc..." />
+                    <button><i class="bi bi-search"></i></button>
+                </form>
+            </div>
+        </section>
+
+        <nav>
+            <ul>
+                <li><a href="./index.html">Home</a></li>
+                <li><a href="./hits.html">Top Hits</a></li>
+                <li><a href="./recent.html">Recently Added</a></li>
+                <li><a href="./favourites.html">Favourites</a></li>
+                <li><a href="./playlists.html">Playlists</a></li>
+                <li><a href="./about.html">About Us</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <section class="m-5">
+                <h1 class='text-center'>Songs</h1>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    
+                    <?php 
+                    $query = "SELECT * FROM music;";
+                    $result = mysqli_query($conn,$query);
+                    while($rows = mysqli_fetch_array($result)) {
+                    ?>
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="./assets/musicimg/<?php echo $rows['image'] ?>" class="card-img-top" alt="...">
+                            <audio class="container-fluid my-3" controls>
+                                <source src="./assets/music/<?php echo $rows['link'] ?>" />
+                            </audio>
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo $rows['name'] ?></h5>
+                                <p class="card-text">
+                                    <?php echo "album:",$rows['album'],"<br>singer:",$rows['singer'],"<br>composer:",$rows['composer'],"<br>songwriter:",$rows['songwriter'],"<br>label:",$rows['label'],"<br>starring:",$rows['starring'] ?>
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-body-secondary">Views:<?php echo $rows['views'] ?></small>
+                            </div>
+                        </div>
+                    </div>
+                    <?php } ?>
+
+                </div>
+            </section>
+
+            <aside></aside>
+        </main>
+
+
+        <footer class="bg-dark text-center text-white">
+            <!-- Grid container -->
+            <div class="container p-4">
+            <!-- Section: Social media -->
+            <section class="mb-4">
+                <!-- Facebook -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="bi bi-facebook"></i></a>
+        
+                <!-- Twitter -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="bi bi-twitter"></i></a>
+        
+                <!-- Google -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="bi bi-google"></i></a>
+        
+                <!-- Instagram -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="bi bi-instagram"></i></a>
+        
+                <!-- Linkedin -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="bi bi-linkedin"></i></a>
+        
+                <!-- Github -->
+                <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="bi bi-github"></i></a>
+            </section>
+            <!-- Section: Social media -->
+        
+            <!-- Section: Form -->
+            <section class="">
+                <form action="">
+                <!--Grid row-->
+                <div class="row d-flex justify-content-center">
+                    <!--Grid column-->
+                    <div class="col-auto">
+                    <p class="pt-2">
+                        <strong>Sign up for our newsletter</strong>
+                    </p>
+                    </div>
+                    <!--Grid column-->
+        
+                    <!--Grid column-->
+                    <div class="col-md-5 col-12">
+                    <!-- Email input -->
+                    <div class="form-outline form-white mb-4">
+                        <input type="email" id="form5Example21" class="form-control" placeholder="Email address"/>
+                    </div>
+                    </div>
+                    <!--Grid column-->
+        
+                    <!--Grid column-->
+                    <div class="col-auto">
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-outline-light mb-4">
+                        Subscribe
+                    </button>
+                    </div>
+                    <!--Grid column-->
+                </div>
+                <!--Grid row-->
+                </form>
+            </section>
+            <!-- Section: Form -->
+        
+            <!-- Section: Text -->
+            <section class="mb-4">
+                <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt distinctio earum
+                repellat quaerat voluptatibus placeat nam, commodi optio pariatur est quia magnam
+                eum harum corrupti dicta, aliquam sequi voluptate quas.
+                </p>
+            </section>
+            <!-- Section: Text -->
+        
+            <!-- Section: Links -->
+            <section class="">
+                <!--Grid row-->
+                <div class="row">
+                <!--Grid column-->
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Links</h5>
+        
+                    <ul class="list-unstyled mb-0">
+                    <li>
+                        <a href="#!" class="text-white">Link 1</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 2</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 3</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 4</a>
+                    </li>
+                    </ul>
+                </div>
+                <!--Grid column-->
+        
+                <!--Grid column-->
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Links</h5>
+        
+                    <ul class="list-unstyled mb-0">
+                    <li>
+                        <a href="#!" class="text-white">Link 1</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 2</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 3</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 4</a>
+                    </li>
+                    </ul>
+                </div>
+                <!--Grid column-->
+        
+                <!--Grid column-->
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Links</h5>
+        
+                    <ul class="list-unstyled mb-0">
+                    <li>
+                        <a href="#!" class="text-white">Link 1</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 2</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 3</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 4</a>
+                    </li>
+                    </ul>
+                </div>
+                <!--Grid column-->
+        
+                <!--Grid column-->
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Links</h5>
+        
+                    <ul class="list-unstyled mb-0">
+                    <li>
+                        <a href="#!" class="text-white">Link 1</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 2</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 3</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Link 4</a>
+                    </li>
+                    </ul>
+                </div>
+                <!--Grid column-->
+                </div>
+                <!--Grid row-->
+            </section>
+            <!-- Section: Links -->
+            </div>
+            <!-- Grid container -->
+        
+            <!-- Copyright -->
+            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2020 Copyright:
+            <a class="text-white" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+            </div>
+            <!-- Copyright -->
+        </footer>
+        <!-- Footer -->
+    </body>
+</html>
